@@ -50,7 +50,7 @@ export const Scripts: ModdedBattleScriptsData = {
   let critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, move.critRatio || 0);
   if (true) {
     critRatio = this.battle.clampIntRange(critRatio, 0, 4);
-    critMult = [0, 0, 0, 0, 1];
+    critMult = [0, 200, 200, 200, 1];
   } else {
     critRatio = this.battle.clampIntRange(critRatio, 0, 4);
     if (this.battle.gen === 6) {
