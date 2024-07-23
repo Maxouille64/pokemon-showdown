@@ -50,7 +50,7 @@ export const Scripts: ModdedBattleScriptsData = {
   let critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, move.critRatio || 0);
   if (true) {
     critRatio = this.battle.clampIntRange(critRatio, 0, 4);
-    critMult = [0, 200, 200, 200, 1];
+    critMult = [0, 0, 0, 0, 1];
   } else {
     critRatio = this.battle.clampIntRange(critRatio, 0, 4);
     if (this.battle.gen === 6) {
@@ -61,16 +61,17 @@ export const Scripts: ModdedBattleScriptsData = {
   }
 
   const moveHit = target.getMoveHitData(move);
-  moveHit.crit = move.willCrit || false;
-  if (move.willCrit === undefined) {
-    if (critRatio) {
-      moveHit.crit = this.battle.randomChance(1, critMult[critRatio]);
-    }
-  }
+          moveHit.crit = move.willCrit || false;
+          if (move.willCrit === undefined) {
+              if (critMult[critRatio]=== 1) {
+                  moveHit.crit = true;
+              }
 
-  if (moveHit.crit) {
-    moveHit.crit = this.battle.runEvent('CriticalHit', target, null, move);
-  }
+              else{
+                  moveHit.crit = false;
+              }
+
+          }
 
   // happens after crit calculation
   basePower = this.battle.runEvent('BasePower', source, target, move, basePower, true);
