@@ -48,6 +48,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
   let critMult;
   let critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, move.critRatio || 0);
+  console.log("scrips: " + critRatio.toString())
   if (true) {
     critRatio = this.battle.clampIntRange(critRatio, 0, 4);
     critMult = [0, 0, 0, 0, 1];

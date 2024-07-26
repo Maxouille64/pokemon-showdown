@@ -1,5 +1,7 @@
 // Note: These are the rules that formats use
 
+const util = require('util')
+
 import type {Learnset} from "../sim/dex-species";
 
 // The list of formats is stored in config/formats.js
@@ -1474,58 +1476,32 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 		},
 	},
 
+
 	nohax: {
 		effectType: 'Rule',
 		name: 'nohax',
 		desc: "INTERDIT AU HAX ICI ATTENTION PAS DE LUCK NO HAXX PLz",
-		par: {
-        inherit: true,
-        onModifySpe(spe, pokemon) {
-            if (!pokemon.hasAbility('quickfeet')) {
-                return this.chainModify(0.25);
-            }
-            return spe;
-        },
-        onBeforeMove(pokemon) {
-            if (false) {
-                this.add('cant', pokemon, 'par');
-                return false;
-            }
-        },
-    },
-    confusion: {
-        inherit: true,
-        onBeforeMove(pokemon) {
-            pokemon.volatiles['confusion'].time--;
-            if (true) {
-                pokemon.removeVolatile('confusion');
-                return;
-            }
-            this.add('-activate', pokemon, 'confusion');
-            if (this.randomChance(1, 2)) {
-                return;
-            }
-            const damage = this.actions.getDamage(pokemon, pokemon, 40);
-            if (typeof damage !== 'number') throw new Error("Confusion damage not dealt");
-            this.damage(damage, pokemon, pokemon, {
-                id: 'confused',
-                effectType: 'Move',
-                type: '???',
-            } as ActiveMove);
-            return false;
-        },
-    },
-    stall: {
-        // In gen 3-4, the chance of protect succeeding does not fall below 1/8.
-        // See http://upokecenter.dreamhosters.com/dex/?lang=en&move=182
-        inherit: true,
-        counterMax: 8,
-    },
-		randomizer(baseDamage: number) {
-						const tr = this.trunc;
-						return tr(tr(baseDamage * (100 - 7)) / 100);
+		//onCriticalHit: false,
+		onCriticalHit(target, source, move) {
+			console.log("onCrit : " + target + source + move)
+			console.log("pokemonThis : " + util.inspect(this.activeTarget, {depth: 0}));
+			let critRatio = this.runEvent('ModifyCritRatio', this.activePokemon, target, move, move.critRatio || 0);
+			console.log("rulesets: " + critRatio);
+			if (move.willCrit===true) {
+				return true;
+			} else if(critRatio > 3) {
+				return true;
+			} else {
+				return false;
+			};
+		},
+
+		onBeforeMove(pokemon, target, move) {
+			this.add('cant', pokemon, 'par');
 		}
+
 	},
+
 
 	minsourcegen: {
 		effectType: 'ValidatorRule',
