@@ -1497,7 +1497,49 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 		},
 
 		onBeforeMove(pokemon, target, move) {
-			this.add('cant', pokemon, 'par');
+			//this.add('cant', pokemon, 'par');
+		},
+
+		onTeamPreview() {
+			this.add('-message', `${this.sides[0].name} wins speedties on odd turns and ${this.sides[1].name} on even turns`);
+
+			console.log("okzadou!!!");
+
+			this.speedSort = function<T extends AnyObject>(list: T[], comparator: (a: T, b: T) => number = this.comparePriority) {
+				if (list.length < 2) return;
+				let sorted = 0;
+				// This is a Selection Sort - not the fastest sort in general, but
+				// actually faster than QuickSort for small arrays like the ones
+				// `speedSort` is used for.
+				// More importantly, it makes it easiest to resolve speed ties
+				// properly.
+				while (sorted + 1 < list.length) {
+					let nextIndexes = [sorted];
+					// grab list of next indexes
+					for (let i = sorted + 1; i < list.length; i++) {
+						const delta = comparator(list[nextIndexes[0]], list[i]);
+						if (delta < 0) continue;
+						if (delta > 0) nextIndexes = [i];
+						if (delta === 0) nextIndexes.push(i);
+					}
+					// put list of next indexes where they belong
+					for (let i = 0; i < nextIndexes.length; i++) {
+						const index = nextIndexes[i];
+						if (index !== sorted + i) {
+							// nextIndexes is guaranteed to be in order, so it will never have
+							// been disturbed by an earlier swap
+							[list[sorted + i], list[index]] = [list[index], list[sorted + i]];
+						}
+					}
+					if (nextIndexes.length > 1) {
+						//this.prng.shuffle(list, sorted, sorted + nextIndexes.length);
+						if (this.turn%2==0) {
+							list.reverse();
+						}
+					}
+					sorted += nextIndexes.length;
+				}
+			};
 		}
 
 	},
