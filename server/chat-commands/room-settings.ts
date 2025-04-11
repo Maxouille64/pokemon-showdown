@@ -792,7 +792,7 @@ export const commands: Chat.ChatCommands = {
 	makeprivatechatroom: 'makechatroom',
 	makepublicchatroom: 'makechatroom',
 	makechatroom(target, room, user, connection, cmd) {
-		room = this.requireRoom();
+		//room = this.requireRoom();
 		this.checkCan('makeroom');
 		const id = toID(target);
 		if (!id || this.cmd === 'makechatroom') return this.parse('/help makechatroom');
