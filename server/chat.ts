@@ -79,6 +79,7 @@ interface Handlers {
 	onDisconnect: (user: User) => void;
 	onRoomDestroy: (roomid: RoomID) => void;
 	onBattleEnd: (battle: RoomBattle, winner: ID, players: ID[]) => void;
+	onBattleCreate: (battle: RoomBattle, players: ID[]) => void;
 	onLadderSearch: (user: User, connection: Connection, format: ID) => void;
 	onBattleRanked: (
 		battle: Rooms.RoomBattle, winner: ID, ratings: (AnyObject | null | undefined)[], players: ID[]
@@ -161,9 +162,11 @@ const MAX_PLUGIN_LOADING_DEPTH = 3;
 
 import { formatText, linkRegex, stripFormatting } from './chat-formatter';
 
-// @ts-expect-error no typedef available
-import ProbeModule = require('probe-image-size');
-const probe: (url: string) => Promise<{ width: number, height: number }> = ProbeModule;
+let probe: null | ((url: string) => Promise<{ width: number, height: number }>) = null;
+
+try {
+	probe = require('probe-image-size');
+} catch {}
 
 const EMOJI_REGEX = /[\p{Emoji_Modifier_Base}\p{Emoji_Presentation}\uFE0F]/u;
 
@@ -493,6 +496,11 @@ export class PageContext extends MessageContext {
 		if (typeof res === 'string') {
 			this.setHTML(res);
 			res = undefined;
+		}
+		if (res === Rooms.RETRY_AFTER_LOGIN) {
+			this.setHTML(
+				`Please log in before accessing this page (don't worry, it will load automatically once you do so).`
+			);
 		}
 		return res;
 	}
@@ -2506,6 +2514,12 @@ export const Chat = new class {
 	 * Gets the dimension of the image at url. Returns 0x0 if the image isn't found, as well as the relevant error.
 	 */
 	getImageDimensions(url: string): Promise<{ height: number, width: number }> {
+		if (Config.noNetRequests) {
+			return Promise.reject(new Error(`Net requests are disabled.`));
+		}
+		if (!probe) {
+			return Promise.reject(new Error(`Images not supported.`));
+		}
 		return probe(url);
 	}
 
