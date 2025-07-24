@@ -72,21 +72,85 @@ export const Formats: FormatList = [
     column: 2,
   },
   {
-    name: "Mix and Mega Random Battle",
+    name: "[Gen 6] Mix and Mega Random Battle",
     inherit: ['[Gen 6] Mix and Mega'],
 
+    mod: 'mixandmegagen6',
     team: 'random',
-    ruleset: ['Obtainable', 'Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'],
+    //ruleset: ['Obtainable', 'Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'],
+    ruleset: ['[Gen 6] Ubers', 'Overflow Stat Mod'],
     banlist: [],
     restricted: [],
+    onModifySpecies(template, target, format, effect) {
+      if (!effect || ['imposter', 'transform'].includes(effect.id)) return;
+      const megaSpecies = (effect as Item).megaStone || ({dragonascent: 'Rayquaza-Mega', redorb: 'Groudon-Primal', blueorb: 'Kyogre-Primal'} as {[k: string]: string})[effect.id];
+      if (!megaSpecies || megaSpecies === template.name) return;
+      template = this.actions.getMixedSpecies(template, megaSpecies);
+      return template;
+    },
+    onBegin() {
+      const allPokemon = this.p1.pokemon.concat(this.p2.pokemon);
+      for (const pokemon of allPokemon) {
+        pokemon.m.originalSpecies = pokemon.baseSpecies.name;
+      }
+    },
+    onSwitchIn(pokemon) {
+      const oMegaTemplate = this.dex.species.get(pokemon.species.originalMega);
+      if (oMegaTemplate.exists && pokemon.m.originalSpecies !== oMegaTemplate.baseSpecies) {
+        // Place volatiles on the Pokémon to show its mega-evolved condition and details
+        this.add('-start', pokemon, oMegaTemplate.requiredItem || oMegaTemplate.requiredMove, '[silent]');
+        const oTemplate = this.dex.species.get(pokemon.m.originalSpecies);
+        if (oTemplate.types.length !== pokemon.species.types.length || oTemplate.types[1] !== pokemon.species.types[1]) {
+          this.add('-start', pokemon, 'typechange', pokemon.species.types.join('/'), '[silent]');
+        }
+      }
+    },
+    onSwitchOut(pokemon) {
+      const oMegaTemplate = this.dex.species.get(pokemon.species.originalMega);
+      if (oMegaTemplate.exists && pokemon.m.originalSpecies !== oMegaTemplate.baseSpecies) {
+        this.add('-end', pokemon, oMegaTemplate.requiredItem || oMegaTemplate.requiredMove, '[silent]');
+      }
+    }
   },
   {
     name: "[Gen 7] Mix and Mega Random Battle",
     inherit: ['[Gen 7] Mix and Mega'],
 
+    mod: 'gen7mixandmega',
     team: 'random',
-    ruleset: ['Obtainable', 'Sleep Clause Mod', 'HP Percentage Mod', 'Cancel Mod'],
+    ruleset: ['[Gen 7] Ubers', 'Overflow Stat Mod'],
     banlist: [],
     restricted: [],
+
+    onModifySpecies(template, target, format, effect) {
+      if (!effect || ['imposter', 'transform'].includes(effect.id)) return;
+      const megaSpecies = (effect as Item).megaStone || ({dragonascent: 'Rayquaza-Mega', redorb: 'Groudon-Primal', blueorb: 'Kyogre-Primal'} as {[k: string]: string})[effect.id];
+      if (!megaSpecies || megaSpecies === template.name) return;
+      template = this.actions.getMixedSpecies(template, megaSpecies);
+      return template;
+    },
+    onBegin() {
+      const allPokemon = this.p1.pokemon.concat(this.p2.pokemon);
+      for (const pokemon of allPokemon) {
+        pokemon.m.originalSpecies = pokemon.baseSpecies.name;
+      }
+    },
+    onSwitchIn(pokemon) {
+      const oMegaTemplate = this.dex.species.get(pokemon.species.originalMega);
+      if (oMegaTemplate.exists && pokemon.m.originalSpecies !== oMegaTemplate.baseSpecies) {
+        // Place volatiles on the Pokémon to show its mega-evolved condition and details
+        this.add('-start', pokemon, oMegaTemplate.requiredItem || oMegaTemplate.requiredMove, '[silent]');
+        const oTemplate = this.dex.species.get(pokemon.m.originalSpecies);
+        if (oTemplate.types.length !== pokemon.species.types.length || oTemplate.types[1] !== pokemon.species.types[1]) {
+          this.add('-start', pokemon, 'typechange', pokemon.species.types.join('/'), '[silent]');
+        }
+      }
+    },
+    onSwitchOut(pokemon) {
+      const oMegaTemplate = this.dex.species.get(pokemon.species.originalMega);
+      if (oMegaTemplate.exists && pokemon.m.originalSpecies !== oMegaTemplate.baseSpecies) {
+        this.add('-end', pokemon, oMegaTemplate.requiredItem || oMegaTemplate.requiredMove, '[silent]');
+      }
+    }
   }
 ];

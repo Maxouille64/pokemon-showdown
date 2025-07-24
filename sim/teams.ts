@@ -634,6 +634,10 @@ export const Teams = new class Teams {
 			TeamGenerator = require(`../data/random-battles/gen9baby/teams`).default;
 		} else if (formatID.includes('gen9randombattle') && format.ruleTable?.has('+pokemontag:cap')) {
 			TeamGenerator = require(`../data/random-battles/gen9cap/teams`).default;
+		} else if (mod === 'mixandmegagen6') {
+			TeamGenerator = require(`../data/mods/mixandmegagen6/random-teams`).default;
+		} else if (mod === 'gen7mixandmega') {
+			TeamGenerator = require(`../data/mods/gen7mixandmega/random-teams`).default;
 		} else {
 			TeamGenerator = require(`../data/random-battles/${mod}/teams`).default;
 		}

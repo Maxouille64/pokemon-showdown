@@ -1,7 +1,6 @@
-import RandomGen6Teams from '../gen6/random-teams';
-import {toID} from '../../../sim/dex';
+import RandomGen7Teams from '../gen7/random-teams';
 
-export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
+export class RandomMixAndMegaGen7Teams extends RandomGen7Teams {
 	randomTeam() {
 		const megaStones = ['Red Orb', 'Blue Orb'];
 		for (const id in this.dex.data.Items) {
@@ -13,7 +12,7 @@ export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
 		const availableFormes: {[k: string]: string[]} = {};
 		for (const id in this.dex.data.FormatsData) {
 			const template = this.dex.species.get(id);
-			if (template.gen <= this.gen && !template.evos.length && !template.isMega && !template.isPrimal && !template.isNonstandard && template.randomBattleMoves) {
+			if (!template.evos.length && !template.isMega && !template.isPrimal && !template.isNonstandard && template.randomBattleMoves) {
 				if (!availableFormes[template.baseSpecies]) {
 					availableFormes[template.baseSpecies] = [id];
 				} else {
@@ -104,8 +103,8 @@ export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
 					template = newTemplate;
 				}
 			}
-			const set = this.randomSet(template, teamDetails, !pokemon.length);
-			if (!template.requiredItem && template.tier !== 'Uber' && !template.evos.length && set.item !== 'Thick Club' && set.item !== 'Stick') {
+			const set = this.randomSet(template, teamDetails, !pokemon.length, this.format.gameType !== 'singles');
+			if (!template.requiredItem && !template.tier.endsWith('Uber') && !template.evos.length && set.item !== 'Thick Club' && set.item !== 'Stick') {
 				let stone = this.sampleNoReplace(megaStones);
 				/** if (template.species === "Shuckle" && ['Aggronite', 'Audinite', 'Charizarditex', 'Charizarditey', 'Galladeite', 'Gyaradosite', 'Houndoominite', 'Latiasite', 'Salamencite', 'Scizorite', 'Sharpedonite', 'Tyranitarite', 'Venusaurite'].indexOf(stone) >= 0) {
 					stone = '';
@@ -150,7 +149,7 @@ export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
 					let index = set.moves.indexOf('facade');
 					if (index >= 0) set.moves[index] = 'return';
 
-					const mega = stone === 'Blue Orb' ? 'kyogreprimal' : stone === 'Red Orb' ? 'groudonprimal' : toID(this.dex.items.get(stone).megaStone);
+					const mega = stone === 'Blue Orb' ? 'Kyogre' : stone === 'Red Orb' ? 'Groudon' : this.dex.items.get(stone).megaEvolves!;
 					index = pokemonPool.indexOf(availableFormes[mega]);
 					if (index >= 0) {
 						pokemonPool[index] = pokemonPool[pokemonPool.length - 1];
@@ -194,7 +193,7 @@ export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
 			typeComboCount[typeCombo] = 1;
 
 			// Increment Uber/NU counters
-			if (tier === 'Uber') {
+			if (tier.endsWith('Uber')) {
 				uberCount++;
 			} else if (tier === 'PU') {
 				puCount++;
@@ -213,4 +212,4 @@ export class RandomMixAndMegaGen6Teams extends RandomGen6Teams {
 	}
 }
 
-export default RandomMixAndMegaGen6Teams;
+export default RandomMixAndMegaGen7Teams;
