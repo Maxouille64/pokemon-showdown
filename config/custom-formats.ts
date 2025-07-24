@@ -2,6 +2,27 @@
 // The rules that formats use are stored in data/rulesets.ts
 
 export const Formats: FormatList = [
+  // S/V Singles
+  ///////////////////////////////////////////////////////////////////
+
+  {
+    section: "S/V Singles",
+  },
+  {
+    name: "[Gen 9] nohax OU",
+    mod: 'nohax',
+    ruleset: ['Standard', 'Sleep Moves Clause', '!Sleep Clause Mod', 'nohax'],
+    banlist: ['Uber', 'AG', 'Arena Trap', 'Moody', 'Sand Veil', 'Shadow Tag', 'Snow Cloak', 'King\'s Rock', 'Razor Fang', 'Baton Pass', 'Last Respects', 'Shed Tail'],
+  },
+  {
+    name: "[Gen 9] nohax Random Battle",
+    desc: `Randomized teams of Pok&eacute;mon without hax.`,
+    mod: 'gen9',
+    team: 'random',
+    bestOfDefault: true,
+    ruleset: ['PotD', 'Obtainable', 'Species Clause', 'HP Percentage Mod', 'Cancel Mod', 'Sleep Clause Mod', 'Illusion Level Mod','nohax'],
+  },
+
   // Use Them All
   ///////////////////////////////////////////////////////////////////
   {
