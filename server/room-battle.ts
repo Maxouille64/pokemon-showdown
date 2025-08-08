@@ -520,6 +520,7 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 	override readonly timer: RoomBattleTimer;
 	started = false;
 	active = false;
+	password = "";
 	replaySaved: boolean | 'auto' = false;
 	forcedSettings: { modchat?: string | null, privacy?: string | null } = {};
 	p1: RoomBattlePlayer = null!;
@@ -1402,5 +1403,5 @@ if (!PM.isParentProcess) {
 	// eslint-disable-next-line no-eval
 	Repl.start(`sim-${process.pid}`, cmd => eval(cmd));
 } else {
-	PM.spawn(global.Config ? Config.simulatorprocesses : 1);
+	PM.spawn(global.Config?.subprocessescache?.simulator ?? 1);
 }
