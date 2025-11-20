@@ -34,7 +34,7 @@ export class RandomMixAndMegaGen7Teams extends RandomGen7Teams {
 		let uberCount = 0;
 		let puCount = 0;
 		const teamDetails: RandomTeamsTypes.TeamDetails = {};
-		console.log(pokemonPool.length);
+		//console.log(pokemonPool.length);
 
 
 		while (pokemonPool.length && pokemonLeft < 6) {
